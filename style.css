@@ -1,0 +1,165 @@
+body {
+  background-color: rgb(28, 28, 28);
+  color: white;
+  font-family: 'Times New Roman', Times, serif;
+  margin-left: 50px;
+}
+
+h1 {
+  font-size: 50px;
+}
+
+p {
+  font-size: 23px;
+  line-height: 1.75;
+  font-weight: 10;
+  font-family: 'Inter Tight', Inter, sans-serif;
+}
+
+strong {
+  font-size: 25px;
+}
+
+nav {
+  margin-top: -30px;
+  margin-left: -58px;
+  width: 100vw;
+  position: sticky;
+  /*if you scroll down, it will stick to the top of the page*/
+  top: 0px;
+  text-align: center;
+  /*in the center of the page*/
+  font-size: 30px;
+  /*making text bigger*/
+  background-color: rgb(69, 69, 69);
+  /*bg color*/
+  z-index: 1;
+  /*so it's in the front of everything else*/
+  height: 65px;
+  /*same height of when we hover*/
+}
+
+nav ul{
+  height: 45px;
+}
+
+nav a {
+  display: inline-block;
+  text-decoration: none;
+  /*no underline or bulletpoint*/
+  margin-top: -10px;
+  padding-left: 50px;
+  padding-right: 50px;
+  /*space betweent them*/
+  vertical-align: middle;
+  /*so it's in the middle*/
+  color: rgb(255, 255, 255);
+  /*text color*/
+  height: 45px;
+  /*same height as navbar*/
+}
+
+nav li {
+  display: inline;
+  height: 45px;
+  /*so they are on the same line*/
+}
+
+nav ul{
+  padding-top: 20px;
+}
+
+nav a:hover {
+  /*when you hover over any of the links in the navbar, they change color*/
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  height: 45px;
+  /*same height as navbar*/
+}
+
+.main_content {
+  display: inline;
+  background-color: rgb(28, 28, 28);
+  margin: auto;
+  color: rgba(255, 255, 255, 0);
+  opacity: 1;
+}
+
+#github{
+  padding-top: 35px;
+}
+
+#github h1{
+  padding-bottom: 10px;
+}
+
+#githubCard {
+  width: 28vw;
+  height: 37.6vw;
+  max-height: 470px;
+  max-width: 350px;
+  float: right;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+#baking-py{
+  margin-right: 50px;
+}
+
+#baking-py h1{
+  right: 0
+}
+
+#youtube {
+  padding-top: 40px;
+}
+
+#youtubeEmbed {
+	width: 45vw;
+	height: 25.3125vw;
+	max-height: 387px;
+	max-width: 688px;
+	float: left;
+  margin-right: 20px;
+}
+
+#channelDescription {
+	position: relative;
+	left: 45 vw;
+  margin-right: 50px;
+}
+
+#popcornPenguinsBox {
+  padding-top: 40px;
+}
+
+#popcornPenguinsImg {
+  width: 300px;       
+  height: auto;       
+  object-fit: cover;   
+  float: right;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+#about li{
+  font-size: 23px;
+  line-height: 1.75;
+  font-weight: 10;
+  font-family: 'Inter Tight', Inter, sans-serif;
+  padding-bottom: 10px; 
+}
+
+#about ::marker{
+  font-size: 2.0em;
+  line-height: .1;
+}
+
+#about #profile{
+  width: 428px;
+  height: 424px;
+  border-radius: 50%;
+  object-fit: cover;
+  float: right
+}
