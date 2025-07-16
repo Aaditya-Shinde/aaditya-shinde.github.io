@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="/Users/aaditya/Desktop/Coding/html/Blog/style.css">
+  <title>Home</title>
+</head>
+<!-- Google tag (gtag.js) -->
+<script language=javascript>document.write(unescape('%3C%73%63%72%69%70%74%20%61%73%79%6E%63%20%73%72%63%3D%22%68%74%74%70%73%3A%2F%2F%77%77%77%2E%67%6F%6F%67%6C%65%74%61%67%6D%61%6E%61%67%65%72%2E%63%6F%6D%2F%67%74%61%67%2F%6A%73%3F%69%64%3D%47%2D%4C%4E%4E%50%56%37%34%4C%4C%46%22%3E%3C%2F%73%63%72%69%70%74%3E%0A%3C%73%63%72%69%70%74%3E%0A%20%20%77%69%6E%64%6F%77%2E%64%61%74%61%4C%61%79%65%72%20%3D%20%77%69%6E%64%6F%77%2E%64%61%74%61%4C%61%79%65%72%20%7C%7C%20%5B%5D%3B%0A%20%20%66%75%6E%63%74%69%6F%6E%20%67%74%61%67%28%29%7B%64%61%74%61%4C%61%79%65%72%2E%70%75%73%68%28%61%72%67%75%6D%65%6E%74%73%29%3B%7D%0A%20%20%67%74%61%67%28%27%6A%73%27%2C%20%6E%65%77%20%44%61%74%65%28%29%29%3B%0A%0A%20%20%67%74%61%67%28%27%63%6F%6E%66%69%67%27%2C%20%27%47%2D%4C%4E%4E%50%56%37%34%4C%4C%46%27%29%3B%0A%3C%2F%73%63%72%69%70%74%3E'))</script>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
+<body>
+
+  <nav>
+      <ul>
+          <li><a href="https://aaditya-shinde.github.io">Home</a></li>
+          <li><a href="https://aaditya-shinde.github.io/Programming/programming">Programming</a></li>
+          <li><a href="https://aaditya-shinde.github.io/Robotics/robotics">Robotics</a></li>
+          <li><a href="https://aaditya-shinde.github.io/Youtube/youtube">Youtube</a></li>
+          <li><a href="https://aaditya-shinde.github.io/AI/ml">Machine Learning</a></li>
+      </ul>
+  </nav>
+
+  <div id="Machine Learning">
+    <h1>Machine Learning</h1>
+    <p>These days, AI is all over the news, an expanding field with many exciting opportunities. Because of this, I started learning about AI. Join me in my Journey. 
+        <br><br>There are two main types of Machine Learning, <a style="color:white;" href="#supervised-learning">Supervised</a>, and <a style="color:white;" href="#supervised-learning">Unsupervised</a>. Both need data to be trained. The input features are what are used to predict in the model. Input features are denoted by the variable 𝑥.</p>
+    <ul>
+      <li id="supervised-learning">
+        <h2>Supervised Learning</h2>
+        <p>In supervised learning, the program is given data with both input feature(s) and target/output feature. This data is collected by a human, so there might be some bias in it. The data has multiple examples, each with the input variables and the “correct” answer that was observed when the data was collected. This “correct” answer is represented by the variable 𝒴
+        . The goal of supervised learning is to predict this target feature given input feature(s). The prediction is represented by the variable \(\hat{y}\). An example of Supervised learning is your spam filter; the input features are the Subject, Email address, and content and the target feature is whether the email is spam or not. In Supervised Learning, there are two big sub-categories: <a style="color:white;" href="#regression">Regression</a> and <a style="color:white;" href="#classification">Classification</a>.
+        </p>
+        <ul>
+          <li id="regression">
+            <h2>Regression</h2>
+            <p>Regression is a type of <a style="color:white;" href="#supervised-learning">Supervised Learning</a> in which the target feature is a number and there are an infinite amount of possibilities(i.e. It isn’t a choice between some finite options).
+                This is achieved by fitting an equation to the data which approximates the target feature. In order to ensure the best equation is found, a cost function is used. A cost function is a function
+                that gives feedback on how good your equation fits the data, usually named J.
+                There are many types of functions that can be used, one of them being the <a style="color:white;" href="#squared-error-cost-function">Squared Error Cost Function</a>. The type of equation used can vary. The ones I have learned so far are <a style="color:white;" href="#linear-regression">Linear</a>.
+            </p>
+            <ul>
+              <li id="linear-regression">
+                <h2>Linear Regression</h2>
+                <p>Linear Regression, as the name suggests, fits a line to the data. The equation of a line is in the format $$ f_{w,b} = wx + b $$\(w\) is the slope of the line and \(b\) is the y-intercept. </p>
+              </li>
+              <li id="squared-error-cost-function">
+                <h2>Squared Error Cost Function</h2>
+                <p>
+                  $$ J(w, b) = \frac{1}{2m} \sum_{i=1}^{m} (y_i - \hat{y}_i)^2 $$
+                  Lets break down this function to understand how it works. 
+                  \(y_i - \hat{y}_i\) is the Error term. 
+                  It is how off the predicted value is from the actual value for each x, y pair in the data. 
+                  Squaring this term means that the result will always be positive. It also makes the cost increase much faster as we move away from the optimal values of w and b. 
+                  \( \sum\limits_{i=1}^{m}\) means that we add up the squared error for every x, y pair and finally we multiply by \(\frac{1}{2m}\) because it will be helpful later and doesn’t change the shape of the function.
+                  We can rewrite this function as 
+                  $$\frac{1}{2m} \left( \left( \sum_{i=1}^{m} x_i^2 \right) w^2 + 2 \left( \sum_{i=1}^{m} x_i y_i \right) w + \sum_{i=1}^{m} y_i^2 + m b^2 - 2 \left( \sum_{i=1}^{m} y_i \right) b + 2 \left( \sum_{i=1}^{m} x_i \right) w b \right)$$
+                  Here we can see that it is the sum of two quadratics, 
+                  one with variable w and one with variable b and also 
+                  the \( \left( 2 \sum\limits_{i=1}^{m} x_i \right) w b \) term. Both \(\sum\limits_{i=1}^{m} x_i^2\) 
+                  and \(m\) are positive, so both of these parabolas(graph of a quadratic) point 
+                  downward, so the sum of these quadratics is a paraboloid(imagine a 3d parabola) 
+                  pointing downward. The problem is the \((2 \sum\limits_{i=1}^{m}x_i)wb\) term, which causes 
+                  the paraboloid to be sometimes unaligned with the axes of the graph(diagonal ovals). 
+                  Because of this, we can’t simply use vertex form to find the w, b point at which the 
+                  cost is the least. However, we can use something called <a style="color:white;" href="#gradient-descent">Gradient Descent</a> to do this.
+                </p>
+              </li>
+              <li id="gradient-descent">
+                <h2>Gradient Descent</h2>
+                  <p>Gradient Descent is kind of like placing a ball on a hilly area; the ball rolls down
+                     until all points next to it are higher than it. Gradient Descent does the same thing.
+                      It looks for the steepest path it can go down and then goes down that way a little, 
+                      then looks again and so on until it reaches a point where all points around it are 
+                      higher than itself. This point is called a Local minimum. If this point is also the 
+                      lowest in the entire function, it is called the Global Minimum. Mathematically, this is how it looks:
+                      $$w_1 = w_1-\alpha\frac{d}{dw_1}J(w_1, w_2 ..., b)$$
+                      $$w_2 = w_2-\alpha\frac{d}{dw_2}J(w_1, w_2 ..., b)$$
+                      $$w_3 = w_3-\alpha\frac{d}{dw_3}J(w_1, w_2 ..., b)$$
+                      $$.$$
+                      $$.$$
+                      $$.$$
+                      $$b = b-\alpha\frac{d}{db}J(w_1, w_2 ..., b)$$
+                      What it does
+                       is taking the derivative of the Cost Function with respect to each parameter 
+                       \(w_1, w_2, w_3 ... b\) and subtracting that value times the learning 
+                       rate 𝛼 from the current value of that parameter. The derivative of a function is the slope
+                        at that point. If the derivative is negative, that means that the parameter needs to 
+                        be increased, and vice versa. Since we subtract this value(times the learning rate, 
+                        which is positive), if the slope is negative, we subtract a negative, which is the same 
+                        as adding a positive, and vice versa. This moves the point closer to the local minimum. 
+                        The step gets smaller as you get closer to the minimum because the slope gets closer and
+                         closer to 0.</p>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</body>
+
+</html>

@@ -9,6 +9,10 @@ h1 {
   font-size: 50px;
 }
 
+.MathJax_Display {
+  font-size: 130%;
+}
+
 p {
   font-size: 23px;
   line-height: 1.75;
