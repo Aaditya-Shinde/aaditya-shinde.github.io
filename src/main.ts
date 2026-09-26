@@ -1,5 +1,4 @@
 import { buildVFSFromModules } from './core/vfsLoader';
-import type { VFSTree } from './core/vfsLoader';
 
 declare global {
   interface Window {
