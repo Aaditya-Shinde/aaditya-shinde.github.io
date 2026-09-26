@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terminal Portfolio</title>
+    <script type="module" crossorigin src="/assets/index-l7lJMd4b.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DDnB2XrF.css">
+  </head>
+  <body>
+    <!-- Terminal Shell UI -->
+    <div id="terminal-container">
+      <div id="terminal-output"></div>
+      <div id="input-line">
+        <span id="prompt">
+          <span class="prompt-user">user@raspberrypi</span><span class="prompt-colon">:</span><span id="prompt-path" class="prompt-path">~</span><span class="prompt-symbol">$ </span>
+        </span>
+        <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false" />
+      </div>
+    </div>
+    
+    <!-- Nano / Pico Webpage Viewer -->
+    <div id="viewer-container" class="hidden">
+      <!-- Header -->
+      <div id="viewer-header" class="pico-header">
+        <span style="flex: 1;">UW PICO 5.09</span>
+        <span id="viewer-filename" style="flex: 1; text-align: center;">File: </span>
+        <span style="flex: 1;"></span> <!-- Balances flexbox for centering -->
+      </div>
+
+      <!-- Rendered HTML Content Area -->
+      <div id="viewer-content-wrapper">
+        <div id="viewer-content"></div>
+      </div>
+
+      <!-- Status Message Bar -->
+      <div id="viewer-status"></div>
+
+      <!-- Footer Function Bar -->
+      <div id="viewer-footer" class="pico-footer">
+        <div class="pico-shortcut"><span class="pico-key">^G</span> Get Help</div>
+        <div class="pico-shortcut"><span class="pico-key">^O</span> WriteOut</div>
+        <div class="pico-shortcut"><span class="pico-key">^R</span> Read File</div>
+        <div class="pico-shortcut"><span class="pico-key">^Y</span> Prev Pg</div>
+        <div class="pico-shortcut"><span class="pico-key">^K</span> Cut Text</div>
+        <div class="pico-shortcut"><span class="pico-key">^C</span> Cur Pos</div>
+        <div class="pico-shortcut"><span class="pico-key">^X</span> Exit</div>
+        <div class="pico-shortcut"><span class="pico-key">^J</span> Justify</div>
+        <div class="pico-shortcut"><span class="pico-key">^W</span> Where is</div>
+        <div class="pico-shortcut"><span class="pico-key">^V</span> Next Pg</div>
+        <div class="pico-shortcut"><span class="pico-key">^U</span> UnCut Text</div>
+        <div class="pico-shortcut"><span class="pico-key">^T</span> To Spell</div>
+      </div>
+    </div>
+
+  </body>
+</html>
