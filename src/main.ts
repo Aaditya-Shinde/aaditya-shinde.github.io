@@ -17,6 +17,9 @@ const commandInput = document.getElementById('command-input') as HTMLInputElemen
 const promptPathEl = document.getElementById('prompt-path')!;
 const viewerContainer = document.getElementById('viewer-container')!;
 const viewerContent = document.getElementById('viewer-content')!;
+const viewerFilename = document.getElementById('viewer-filename')!;
+const viewerStatus = document.getElementById('viewer-status')!;
+const viewerContentWrapper = document.getElementById('viewer-content-wrapper')!;
 
 const AVAILABLE_COMMANDS = ['ls', 'cd', 'pwd', 'show', 'clear'];
 
@@ -69,10 +72,12 @@ function resolvePath(target: string): string {
   return '/' + stack.join('/');
 }
 
-function openViewer(content: string) {
+function openViewer(content: string, filename: string) {
   inViewerMode = true;
   commandInput.blur(); // Remove focus from terminal input field
   viewerContent.innerHTML = content;
+  viewerFilename.textContent = `File: ${filename}`;
+  viewerStatus.textContent = ''; // Clear status on load
   viewerContainer.classList.remove('hidden');
 }
 
@@ -142,6 +147,14 @@ function handleTabAutocomplete() {
     }
   }
 }
+
+// Click anywhere on the terminal to focus the input prompt
+terminalContainer.addEventListener('click', () => {
+  // Only focus if not in viewer mode and the user isn't actively highlighting text
+  if (!inViewerMode && window.getSelection()?.toString() === '') {
+    commandInput.focus();
+  }
+});
 
 // Terminal Key Listener (Handles input, enter, up/down history, tab completion)
 commandInput.addEventListener('keydown', (e) => {
@@ -264,7 +277,7 @@ commandInput.addEventListener('keydown', (e) => {
       const node = VFS[targetPath];
 
       if (node && node.type === 'file' && node.content) {
-        openViewer(node.content);
+        openViewer(node.content, targetPath);
       } else {
         printText(`show: cannot view path '${arg || pwd}'`);
       }
@@ -276,23 +289,53 @@ commandInput.addEventListener('keydown', (e) => {
   }
 });
 
-// Window Key Listener for Viewer Exit Commands
+// Window Key Listener for Viewer Commands
 window.addEventListener('keydown', (e) => {
   if (!inViewerMode) return;
 
-  // Intercept and prevent any default viewer key bindings from hitting the terminal
-  if (e.ctrlKey && e.key.toLowerCase() === 'x') {
-    e.preventDefault();
-    e.stopPropagation();
-    closeViewer();
-    return;
+  // Handle Ctrl shortcuts for the Pico editor
+  if (e.ctrlKey) {
+    const key = e.key.toLowerCase();
+    
+    const activeKeys = ['x', 'g', 'y', 'v', 'c'];
+    const inactiveKeys = ['o', 'r', 'k', 'j', 'w', 'u', 't'];
+
+    if (activeKeys.includes(key) || inactiveKeys.includes(key)) {
+      e.preventDefault(); 
+      e.stopPropagation();
+
+      if (key === 'x') {
+        closeViewer();
+      } 
+      else if (key === 'g') {
+        viewerStatus.textContent = 'Help: Use ^X to exit, ^Y/^V to scroll pages.';
+      } 
+      else if (key === 'y') {
+        // Prev Pg (Scroll Up)
+        viewerContentWrapper.scrollTop -= viewerContentWrapper.clientHeight;
+        viewerStatus.textContent = '';
+      } 
+      else if (key === 'v') {
+        // Next Pg (Scroll Down)
+        viewerContentWrapper.scrollTop += viewerContentWrapper.clientHeight;
+        viewerStatus.textContent = '';
+      } 
+      else if (key === 'c') {
+        // Cur Pos
+        const maxScroll = Math.max(1, viewerContentWrapper.scrollHeight - viewerContentWrapper.clientHeight);
+        const pct = Math.round((viewerContentWrapper.scrollTop / maxScroll) * 100);
+        viewerStatus.textContent = `Current Position: ${pct}% of document`;
+      }
+      else if (inactiveKeys.includes(key)) {
+        // Catch all non-working footer commands
+        viewerStatus.textContent = `[ ^${key.toUpperCase()} is disabled in read-only web mode ]`;
+      }
+      return;
+    }
   }
 
-  // :q shortcut
+  // Fallback :q to quit
   if (e.key === 'q') {
-    e.preventDefault();
-    e.stopPropagation();
     closeViewer();
-    return;
   }
-}, true); // Use capture phase to intercept prior to terminal input
+}, true);
