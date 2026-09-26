@@ -1,7 +1,19 @@
 :root {
-  --bg-color: #0d1117;
-  --text-color: #c9d1d9;
-  --prompt-color: #58a6ff;
+  /* Raspberry Pi OS Dark Terminal Theme */
+  --bg-color: #0c0c0c;
+  --text-color: #cccccc;
+  
+  /* Prompt Colors */
+  --user-host-color: #00ff00; /* Bright Green (user@hostname) */
+  --colon-color: #cccccc;     /* Light Grey (:) */
+  --path-color: #5555ff;      /* Electric Blue (~ or /path) */
+  --symbol-color: #cccccc;    /* Light Grey ($) */
+
+  /* Directory and File Colors */
+  --dir-color: #5555ff;       /* Bold Blue for Directories */
+  --file-color: #cccccc;      /* Light Grey for Regular Files */
+  --exec-color: #00ff00;      /* Green for Executables */
+  
   --viewer-bg: #161b22;
   --font-family: 'Courier New', Courier, monospace;
 }

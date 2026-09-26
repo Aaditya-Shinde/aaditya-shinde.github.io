@@ -1,9 +1,9 @@
 #terminal-container {
-  padding: 20px;
+  padding: 16px;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Allow the main container to scroll */
+  overflow-y: auto;
 }
 
 #terminal-output {
@@ -20,10 +20,26 @@
 }
 
 #prompt {
-  color: var(--prompt-color);
+  display: inline-flex;
   margin-right: 8px;
   font-weight: bold;
   white-space: nowrap;
+}
+
+.prompt-user {
+  color: var(--user-host-color);
+}
+
+.prompt-colon {
+  color: var(--colon-color);
+}
+
+.prompt-path {
+  color: var(--path-color);
+}
+
+.prompt-symbol {
+  color: var(--symbol-color);
 }
 
 #command-input {
@@ -34,4 +50,19 @@
   font-family: var(--font-family);
   font-size: 1rem;
   flex-grow: 1;
+}
+
+/* File / Folder Coloring for `ls` output */
+.ls-dir {
+  color: var(--dir-color);
+  font-weight: bold;
+}
+
+.ls-file {
+  color: var(--file-color);
+}
+
+.ls-output-line {
+  display: flex;
+  gap: 16px;
 }

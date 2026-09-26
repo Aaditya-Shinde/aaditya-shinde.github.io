@@ -1,0 +1,7 @@
+===================================================================
+  Welcome to my Interactive Terminal Portfolio! (Raspberry Pi OS)
+  
+  Type 'ls' to list available directories and pages.
+  Type 'cd <dir>' to navigate between sections.
+  Type 'show <page.html>' to view a webpage in full-screen mode.
+===================================================================
