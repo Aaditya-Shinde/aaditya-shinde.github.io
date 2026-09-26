@@ -1,6 +1,20 @@
 import { buildVFSFromModules } from './core/vfsLoader';
 import type { VFSTree } from './core/vfsLoader';
 
+declare global {
+  interface Window {
+    find(
+      string?: string,
+      caseSensitive?: boolean,
+      backwards?: boolean,
+      wrapAround?: boolean,
+      wholeWord?: boolean,
+      searchInFrames?: boolean,
+      showDialog?: boolean
+    ): boolean;
+  }
+}
+
 // Initialize the Virtual File System and load the welcome message
 const { vfs: VFS, welcomeMessage } = buildVFSFromModules();
 
@@ -22,6 +36,94 @@ const viewerStatus = document.getElementById('viewer-status')!;
 const viewerContentWrapper = document.getElementById('viewer-content-wrapper')!;
 
 const AVAILABLE_COMMANDS = ['ls', 'cd', 'pwd', 'show', 'clear'];
+
+let searchMatches: HTMLElement[] = [];
+let currentMatchIndex = 0;
+let lastSearchQuery = '';
+
+function clearSearchHighlights() {
+  const highlights = viewerContent.querySelectorAll('.pico-highlight');
+  highlights.forEach((el) => {
+    const parent = el.parentNode;
+    if (parent) {
+      parent.replaceChild(document.createTextNode(el.textContent || ''), el);
+      parent.normalize();
+    }
+  });
+  searchMatches = [];
+  currentMatchIndex = 0;
+  lastSearchQuery = '';
+}
+
+function performSearch(query: string): boolean {
+  clearSearchHighlights();
+  if (!query.trim()) return false;
+
+  // Search visible text nodes only (prevents matching inside HTML tag names/attributes)
+  const walker = document.createTreeWalker(viewerContent, NodeFilter.SHOW_TEXT, null);
+  const textNodes: Text[] = [];
+  let node: Node | null;
+
+  while ((node = walker.nextNode())) {
+    if (node.nodeValue && node.nodeValue.toLowerCase().includes(query.toLowerCase())) {
+      textNodes.push(node as Text);
+    }
+  }
+
+  if (textNodes.length === 0) return false;
+
+  textNodes.forEach((textNode) => {
+    const text = textNode.nodeValue || '';
+    const lowerText = text.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+
+    const fragment = document.createDocumentFragment();
+    let lastIdx = 0;
+    let matchIndex = lowerText.indexOf(lowerQuery);
+
+    while (matchIndex !== -1) {
+      if (matchIndex > lastIdx) {
+        fragment.appendChild(document.createTextNode(text.substring(lastIdx, matchIndex)));
+      }
+
+      const mark = document.createElement('mark');
+      mark.className = 'pico-highlight';
+      mark.textContent = text.substring(matchIndex, matchIndex + query.length);
+
+      fragment.appendChild(mark);
+      searchMatches.push(mark);
+
+      lastIdx = matchIndex + query.length;
+      matchIndex = lowerText.indexOf(lowerQuery, lastIdx);
+    }
+
+    if (lastIdx < text.length) {
+      fragment.appendChild(document.createTextNode(text.substring(lastIdx)));
+    }
+
+    if (textNode.parentNode) {
+      textNode.parentNode.replaceChild(fragment, textNode);
+    }
+  });
+
+  lastSearchQuery = query;
+  return searchMatches.length > 0;
+}
+
+function jumpToMatch(index: number) {
+  if (searchMatches.length === 0) return;
+
+  searchMatches.forEach((m, i) => {
+    if (i === index) {
+      m.classList.add('pico-highlight-active');
+    } else {
+      m.classList.remove('pico-highlight-active');
+    }
+  });
+
+  const target = searchMatches[index];
+  target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
 
 function getFormattedPath(): string {
   return pwd === '/' ? '~' : pwd;
@@ -74,17 +176,29 @@ function resolvePath(target: string): string {
 
 function openViewer(content: string, filename: string) {
   inViewerMode = true;
-  commandInput.blur(); // Remove focus from terminal input field
+  commandInput.blur(); 
+  
+  clearSearchHighlights(); 
+  
   viewerContent.innerHTML = content;
   viewerFilename.textContent = `File: ${filename}`;
-  viewerStatus.textContent = ''; // Clear status on load
+  viewerStatus.textContent = ''; 
+
+  // 1. Un-hide container first so DOM dimensions are active
   viewerContainer.classList.remove('hidden');
+  
+  // 2. Reset scroll immediately and enforce on next frame repaint
+  viewerContentWrapper.scrollTop = 0;
+  requestAnimationFrame(() => {
+    viewerContentWrapper.scrollTop = 0;
+  });
 }
 
 function closeViewer() {
+  clearSearchHighlights(); // Clear highlights on exit
   inViewerMode = false;
   viewerContainer.classList.add('hidden');
-  commandInput.focus(); // Refocus terminal input field
+  commandInput.focus();
 }
 
 // Display welcome banner immediately on terminal startup
@@ -293,12 +407,11 @@ commandInput.addEventListener('keydown', (e) => {
 window.addEventListener('keydown', (e) => {
   if (!inViewerMode) return;
 
-  // Handle Ctrl shortcuts for the Pico editor
   if (e.ctrlKey) {
     const key = e.key.toLowerCase();
     
-    const activeKeys = ['x', 'g', 'y', 'v', 'c'];
-    const inactiveKeys = ['o', 'r', 'k', 'j', 'w', 'u', 't'];
+    const activeKeys = ['x', 'g', 'y', 'v', 'c', 'w', 'f'];
+    const inactiveKeys = ['o', 'r', 'k', 'j', 'u', 't'];
 
     if (activeKeys.includes(key) || inactiveKeys.includes(key)) {
       e.preventDefault(); 
@@ -308,26 +421,70 @@ window.addEventListener('keydown', (e) => {
         closeViewer();
       } 
       else if (key === 'g') {
-        viewerStatus.textContent = 'Help: Use ^X to exit, ^Y/^V to scroll pages.';
+        viewerStatus.textContent = 'Help: Use ^X to exit, ^W/^F to search, ^Y/^V to scroll.';
       } 
       else if (key === 'y') {
-        // Prev Pg (Scroll Up)
         viewerContentWrapper.scrollTop -= viewerContentWrapper.clientHeight;
         viewerStatus.textContent = '';
       } 
       else if (key === 'v') {
-        // Next Pg (Scroll Down)
         viewerContentWrapper.scrollTop += viewerContentWrapper.clientHeight;
         viewerStatus.textContent = '';
       } 
       else if (key === 'c') {
-        // Cur Pos
         const maxScroll = Math.max(1, viewerContentWrapper.scrollHeight - viewerContentWrapper.clientHeight);
         const pct = Math.round((viewerContentWrapper.scrollTop / maxScroll) * 100);
         viewerStatus.textContent = `Current Position: ${pct}% of document`;
       }
+      else if (key === 'w' || key === 'f') {
+        // If already searching and pressing Ctrl+W again, jump to next match
+        if (searchMatches.length > 0) {
+          currentMatchIndex = (currentMatchIndex + 1) % searchMatches.length;
+          jumpToMatch(currentMatchIndex);
+          viewerStatus.textContent = `Search: "${lastSearchQuery}" [Match ${currentMatchIndex + 1} of ${searchMatches.length}]`;
+          return;
+        }
+
+        viewerStatus.innerHTML = `Search: <input type="text" id="viewer-search-input" autocomplete="off" spellcheck="false" style="background:transparent; color:#fff; border:none; outline:none; font-family:inherit; font-size:inherit; width: 60%;">`;
+        
+        const searchInput = document.getElementById('viewer-search-input') as HTMLInputElement;
+
+        searchInput.addEventListener('keydown', (searchEvent) => {
+          searchEvent.stopPropagation();
+
+          if (searchEvent.key === 'Enter') {
+            const query = searchInput.value;
+
+            if (query) {
+              if (query === lastSearchQuery && searchMatches.length > 0) {
+                // Cycle through matches on repeated Enter
+                currentMatchIndex = (currentMatchIndex + 1) % searchMatches.length;
+                jumpToMatch(currentMatchIndex);
+                viewerStatus.textContent = `Search: "${query}" [Match ${currentMatchIndex + 1} of ${searchMatches.length}]`;
+              } else {
+                // Perform new search
+                const found = performSearch(query);
+                if (found) {
+                  currentMatchIndex = 0;
+                  jumpToMatch(0);
+                  viewerStatus.textContent = `Search: "${query}" [Match 1 of ${searchMatches.length}]`;
+                } else {
+                  viewerStatus.textContent = `[ Not found: "${query}" ]`;
+                }
+              }
+            } else {
+              clearSearchHighlights();
+              viewerStatus.textContent = '';
+            }
+          } else if (searchEvent.key === 'Escape') {
+            clearSearchHighlights();
+            viewerStatus.textContent = '';
+          }
+        });
+
+        searchInput.focus();
+      }
       else if (inactiveKeys.includes(key)) {
-        // Catch all non-working footer commands
         viewerStatus.textContent = `[ ^${key.toUpperCase()} is disabled in read-only web mode ]`;
       }
       return;

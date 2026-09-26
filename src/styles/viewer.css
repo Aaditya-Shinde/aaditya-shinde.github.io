@@ -124,3 +124,15 @@
   border: 1px solid #444;
   overflow-x: auto;
 }
+
+mark.pico-highlight {
+  background-color: #0055ff;
+  color: #ffffff;
+  padding: 0 2px;
+}
+
+mark.pico-highlight-active {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  font-weight: bold;
+}
