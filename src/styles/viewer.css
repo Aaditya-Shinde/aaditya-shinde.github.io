@@ -1,0 +1,32 @@
+#viewer-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--viewer-bg);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  padding: 10px;
+}
+
+#viewer-header {
+  background: #21262d;
+  padding: 5px 10px;
+  font-weight: bold;
+  border-bottom: 1px solid #30363d;
+}
+
+#viewer-content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+#viewer-footer {
+  background: #21262d;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  border-top: 1px solid #30363d;
+}

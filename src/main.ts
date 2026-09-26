@@ -1,60 +1,115 @@
-import './style.css'
-import heroImg from './assets/hero.png'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import { setupCounter } from './counter.ts'
+import { VFS } from './data/pages';
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+let pwd = '/';
+let inViewerMode = false;
 
-<div class="ticks"></div>
+const terminalOutput = document.getElementById('terminal-output')!;
+const commandInput = document.getElementById('command-input') as HTMLInputElement;
+const promptEl = document.getElementById('prompt')!;
+const viewerContainer = document.getElementById('viewer-container')!;
+const viewerContent = document.getElementById('viewer-content')!;
+const terminalContainer = document.getElementById('terminal-container')!;
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://www.typescriptlang.org" target="_blank">
-          <img class="button-icon" src="${typescriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+function print(text: string) {
+  const line = document.createElement('div');
+  line.textContent = text;
+  terminalOutput.appendChild(line);
+  
+  // Auto-scroll the container to the bottom so the prompt stays visible
+  terminalContainer.scrollTop = terminalContainer.scrollHeight;
+}
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+function updatePrompt() {
+  promptEl.textContent = `user@portfolio:${pwd}$ `;
+}
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+function resolvePath(target: string): string {
+  if (target === '/') return '/';
+  if (target.startsWith('/')) return target;
+  return pwd === '/' ? `/${target}` : `${pwd}/${target}`;
+}
+
+function openViewer(content: string) {
+  inViewerMode = true;
+  viewerContent.innerHTML = content;
+  viewerContainer.classList.remove('hidden');
+}
+
+function closeViewer() {
+  inViewerMode = false;
+  viewerContainer.classList.add('hidden');
+  commandInput.focus();
+}
+
+// Shell Input Listener
+commandInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const rawInput = commandInput.value.trim();
+    commandInput.value = '';
+
+    if (!rawInput) return;
+
+    print(`${promptEl.textContent}${rawInput}`);
+
+    const parts = rawInput.split(' ');
+    const cmd = parts[0];
+    const arg = parts[1] || '';
+
+    if (cmd === 'pwd') {
+      print(pwd);
+    } else if (cmd === 'ls') {
+      const node = VFS[pwd];
+      if (node && node.type === 'dir' && node.children) {
+        print(node.children.join('  '));
+      }
+    } else if (cmd === 'cd') {
+      if (!arg || arg === '~') {
+        pwd = '/';
+      } else if (arg === '..') {
+        if (pwd !== '/') {
+          const parts = pwd.split('/').filter(Boolean);
+          parts.pop();
+          pwd = parts.length === 0 ? '/' : '/' + parts.join('/');
+        }
+      } else {
+        const targetPath = resolvePath(arg);
+        const node = VFS[targetPath];
+        if (node && node.type === 'dir') {
+          pwd = targetPath;
+        } else {
+          print(`cd: no such directory: ${arg}`);
+        }
+      }
+      updatePrompt();
+    } else if (cmd === 'show') {
+      const targetPath = arg ? resolvePath(arg) : pwd;
+      const node = VFS[targetPath];
+
+      if (node && node.type === 'file' && node.content) {
+        openViewer(node.content);
+      } else {
+        print(`show: cannot view path '${arg || pwd}'`);
+      }
+    } else {
+      print(`command not found: ${cmd}`);
+    }
+  }
+
+  terminalContainer.scrollTop = terminalContainer.scrollHeight;
+});
+
+// Exit Listener for Vim / Nano Mode
+window.addEventListener('keydown', (e) => {
+  if (!inViewerMode) return;
+
+  // Ctrl+X to exit
+  if (e.ctrlKey && e.key.toLowerCase() === 'x') {
+    e.preventDefault();
+    closeViewer();
+  }
+  
+  // Vim-style :q exit sequence
+  if (e.key === 'q') {
+    closeViewer();
+  }
+});

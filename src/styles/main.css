@@ -1,0 +1,25 @@
+:root {
+  --bg-color: #0d1117;
+  --text-color: #c9d1d9;
+  --prompt-color: #58a6ff;
+  --viewer-bg: #161b22;
+  --font-family: 'Courier New', Courier, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  height: 100vh;
+  overflow: hidden;
+}
+
+.hidden {
+  display: none !important;
+}

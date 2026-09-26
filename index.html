@@ -1,13 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>portfolio-terminal</title>
+    <title>Terminal Portfolio</title>
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <link rel="stylesheet" href="/src/styles/terminal.css" />
+    <link rel="stylesheet" href="/src/styles/viewer.css" />
   </head>
   <body>
-    <div id="app"></div>
+    <!-- Terminal Shell UI -->
+    <div id="terminal-container">
+      <div id="terminal-output"></div>
+      <div id="input-line">
+        <span id="prompt">user@portfolio:~$ </span>
+        <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false" />
+      </div>
+    </div>
+
+    <!-- Vim/Nano Fullscreen Viewer Overlay -->
+    <div id="viewer-container" class="hidden">
+      <div id="viewer-header">-- PORTFOLIO VIEWER -- (Press Ctrl+X or type :q to exit)</div>
+      <div id="viewer-content"></div>
+      <div id="viewer-footer">STATUS: NORMAL</div>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
